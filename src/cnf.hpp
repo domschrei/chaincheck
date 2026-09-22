@@ -136,12 +136,19 @@ public:
         std::set_difference(goal_clauses.begin(), goal_clauses.end(),
                              own.begin(), own.end(), std::back_inserter(missing));
 
+        int nbEnumerated = 0;
         for (const auto& clause : missing) {
             std::fprintf(stderr, "clause (");
             for (size_t i = 0; i < clause.size(); i++)
                 std::fprintf(stderr, "%s%d", i ? " " : "", clause[i]);
             std::fprintf(stderr, ") occurs only in the second CNF (%s), not in the first\n",
                          path.c_str());
+            nbEnumerated++;
+            if (nbEnumerated == 10 && missing.size() > 10) {
+                std::fprintf(stderr, "... as well as %lu further clauses\n",
+                    missing.size()-nbEnumerated);
+                break;
+            }
         }
 
         return missing.empty();
