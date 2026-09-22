@@ -7,9 +7,20 @@
 
 #include "../cnf.hpp"
 #include "parse_util.hpp"
+#include "file_type_checker.hpp"
 
 inline bool apply_dsr_proof(Cnf& cnf, const std::string& dsr_path) {
-    FILE* f = fopen(dsr_path.c_str(), "r");
+
+    FILE* f;
+    bool compressed = FileTypeChecker::is_file_binary(dsr_path);
+    if (compressed) {
+        printf("DSR: Seems to be binary file, using decompression\n");
+        std::string cmd = std::string(DSR_COMPRESS_PATH) + " -d " + dsr_path;
+        f = popen(cmd.c_str(), "r");
+    } else {
+        printf("DSR: Seems to be plaintext file, reading directly\n");
+        f = fopen(dsr_path.c_str(), "r");
+    }
     if (!f) return false;
 
     int next_id = cnf.next_free_id();
@@ -41,6 +52,15 @@ inline bool apply_dsr_proof(Cnf& cnf, const std::string& dsr_path) {
             cnf.add_clause(next_id++, std::move(clause));
     }
 
-    fclose(f);
+    if (compressed) {
+        int status = pclose(f);
+        if (status == -1) {
+            perror("pclose failed");
+        } else if (status != 0) {
+            printf("DSR decompression exited with status %d\n", status);
+        }
+    } else {
+        fclose(f);
+    }
     return true;
 }

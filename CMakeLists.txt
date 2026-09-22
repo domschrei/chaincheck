@@ -23,6 +23,7 @@ ExternalProject_Add(dsr_trim_ext
 ExternalProject_Get_Property(dsr_trim_ext SOURCE_DIR)
 set(DSR_TRIM_BINARY  ${SOURCE_DIR}/bin/dsr-trim)
 set(LSR_CHECK_BINARY ${SOURCE_DIR}/bin/lsr-check)
+set(DSR_COMPRESS_BINARY ${SOURCE_DIR}/bin/compress)
 
 # PalRUP-Check (https://github.com/rubenGoetz/PalRUP-Check) prüft PalRUP-
 # Beweise (parallele/verteilte Beweisfragmente). Ist selbst ein CMake-Projekt,

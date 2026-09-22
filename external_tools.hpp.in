@@ -4,6 +4,7 @@
 // gebauten Binaries aus https://github.com/ccodel/dsr-trim.
 inline constexpr const char* DSR_TRIM_PATH  = "@DSR_TRIM_BINARY@";
 inline constexpr const char* LSR_CHECK_PATH = "@LSR_CHECK_BINARY@";
+inline constexpr const char* DSR_COMPRESS_PATH = "@DSR_COMPRESS_BINARY@";
 
 // Pfade zu den per ExternalProject gebauten Binaries aus
 // https://github.com/rubenGoetz/PalRUP-Check.

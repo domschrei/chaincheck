@@ -11,9 +11,9 @@
 #include <unistd.h>
 #include "../checker_interface.hpp"
 #include "../cnf.hpp"
+#include "external_tools.hpp"
 #include "lsr_apply.hpp"
 #include "../subprocess.hpp"
-#include "external_tools.hpp"
 
 class LratChecker : public CheckerInterface {
     CheckerPosition _position;

@@ -13,7 +13,7 @@
 
 namespace fs = std::filesystem;
 
-static const std::array<std::string, 3> allowed_extensions = {".lrat", ".sr", ".palrup"};
+static const std::array<std::string, 4> allowed_extensions = {".drat", ".lrat", ".sr", ".palrup"};
 
 static int parse_step_number(const fs::path& path) {
     std::string stem = path.stem().string();

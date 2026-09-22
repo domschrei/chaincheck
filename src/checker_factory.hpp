@@ -4,7 +4,7 @@
 #include <string>
 #include "checker_interface.hpp"
 
-enum class ProofFormat { LRAT, SR, PALRUP, UNKNOWN };
+enum class ProofFormat { DRAT, LRAT, SR, PALRUP, UNKNOWN };
 
 std::unique_ptr<CheckerInterface> make_checker(
     CheckerPosition position,
