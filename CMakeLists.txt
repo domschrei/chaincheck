@@ -35,7 +35,7 @@ set(DSR_COMPRESS_BINARY ${SOURCE_DIR}/bin/compress)
 # explizitem SOURCE_DIR, damit der Code wie gewünscht unter extern/ landet.
 ExternalProject_Add(palrup_check_ext
     GIT_REPOSITORY    https://github.com/rubenGoetz/PalRUP-Check.git
-    GIT_TAG           d9382fb4b0acf094034ee91e2ed0a22b1b479c1d
+    GIT_TAG           d089fd6dd4425f56fb8c62ea96cf2be495b41051
     SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/extern/palrup_check
     UPDATE_DISCONNECTED TRUE
     INSTALL_COMMAND   ""
