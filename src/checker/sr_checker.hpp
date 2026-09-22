@@ -55,9 +55,13 @@ public:
             clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t0);
             double child_cpu = 0.0;
 
-            std::string lsr_path = (std::filesystem::temp_directory_path()
-                / (std::filesystem::path(_proof_file).filename().string() + ".lsr")).string();
-
+            // We actually do not need to quite literally "double check" the proof at this point.
+            // The proof is already being checked by dsr-trim, and the elaborated (LSR) proof can get huge.
+            // As such, we disable LSR proof output and the second checking stage by setting the LSR path
+            // to /dev/null here. (dsr-trim understands this and suppresses its LSR output altogether.)
+            //std::string lsr_path = (std::filesystem::temp_directory_path()
+            //    / (std::filesystem::path(_proof_file).filename().string() + ".lsr")).string();
+            std::string lsr_path = "/dev/null";
             
             pid_t trim_pid = spawn_process({DSR_TRIM_PATH, "-q", "-f", _cnf_path, _proof_file, lsr_path});
 
@@ -96,19 +100,24 @@ public:
                 _cnf_match_ok.store(result_ok);
                 _succeeded.store(false);
                 _done.store(true);
-                std::filesystem::remove(lsr_path);
+                if (lsr_path != "/dev/null") std::filesystem::remove(lsr_path);
                 return;
             }
 
             // lsr-check (legitimacy of the proof steps, part 1) needs the finished
             // LSR file, so it can only start now.
-            double check_cpu = 0.0;
-            pid_t check_pid = spawn_process({LSR_CHECK_PATH, "-q", _cnf_path, lsr_path});
-            bool check_ok = (check_pid >= 0) && wait_for_process(check_pid, check_cpu);
-            child_cpu += check_cpu;
-            if (!check_ok)
-                std::fprintf(stderr, "lsr-check failed for %s\n", _proof_file.c_str());
-            std::filesystem::remove(lsr_path);
+            bool check_ok;
+            if (lsr_path == "/dev/null") {
+                check_ok = true;
+            } else {
+                double check_cpu = 0.0;
+                pid_t check_pid = spawn_process({LSR_CHECK_PATH, "-q", _cnf_path, lsr_path});
+                check_ok = (check_pid >= 0) && wait_for_process(check_pid, check_cpu);
+                child_cpu += check_cpu;
+                if (!check_ok)
+                    std::fprintf(stderr, "lsr-check failed for %s\n", _proof_file.c_str());
+                std::filesystem::remove(lsr_path);
+            }
 
             clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t1);
             double thread_cpu = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
